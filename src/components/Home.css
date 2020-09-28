@@ -1,0 +1,19 @@
+.home {
+  background-color: rgba(59,170,218);
+  background-image: url('../markus-spiske-IQhjLO2uYmA-unsplash.jpg');
+  background-size: auto 100vh;
+  height: 100vh;
+  padding-top: 130px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.text {
+  background-color: rgba(240, 248, 255, 0.8);
+  width: 25em;
+  margin: 0px auto;
+  padding: 30px;
+  border-radius: 5px;
+
+}
+

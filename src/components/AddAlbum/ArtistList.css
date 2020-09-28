@@ -1,0 +1,17 @@
+.artistBtn {
+  margin: 5px;
+}
+
+.artistList {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.card {
+  margin: 10px;
+}
+
+.grey {
+  background-color: grey;
+}
