@@ -6,12 +6,17 @@ import SearchArtist from './AddAlbum/SearchArtist';
 import DefaultImg from '../bruno-emmanuelle-Gi6-m_t_W-E-unsplash.jpg';
 import Nav from './Nav';
 import {Modal, Button} from 'react-bootstrap';
+import {Redirect} from 'react-router-dom';
 
 export default function AddAlbum(props) {
 
+  if (props.checkLogOut) {
+    return <Redirect to={'/'}/>
+  };
+
   return (
     <>
-    <Nav />
+    <Nav logOut={props.logOut}/>
     <div>
       <Modal centered show={props.duplicate}>
         <Modal.Body>

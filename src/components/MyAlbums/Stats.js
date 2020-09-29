@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import { PieChart, Pie, Cell, Sector } from 'recharts';
 import Nav from '../Nav';
+import {Redirect} from 'react-router-dom';
 
 // Get extra information piechart
 const renderActiveShape = (props) => {
@@ -61,6 +62,10 @@ export default function Stats(props) {
     setIndex(index);
   };
 
+  if (props.checkLogOut) {
+    return <Redirect to={'/'}/>
+  };
+  
   if (!props.myAlbums) {
     return <p>Loading...</p>
   };
@@ -85,7 +90,7 @@ export default function Stats(props) {
 
   return (
     <>
-    <Nav />
+    <Nav logOut={props.logOut}/>
     <h4>Total number of LP's: {props.myAlbums.length}</h4>
     <p>Genres:</p>
     <PieChart width={750} height={300}>

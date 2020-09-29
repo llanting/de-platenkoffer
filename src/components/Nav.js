@@ -3,7 +3,7 @@ import {Navbar, Nav, Button} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import {PUBLIC_URL} from '../config';
 
-export default function Navigation() {
+export default function Navigation(props) {
   return (
     <Navbar sticky='top' variant="dark" style={{height: '50px', backgroundColor: '#3baada'}}>
       <Nav className="mr-auto">
@@ -18,6 +18,9 @@ export default function Navigation() {
         </Nav.Item>
         <Nav.Item>
           <Link to={'/stats'}><Button style={{border: 'none',backgroundColor: 'transparent', color: 'white'}}>Stats</Button></Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Button style={{border: 'none',backgroundColor: 'transparent', color: 'white'}} onClick={props.logOut}>Log Out</Button>
         </Nav.Item>
       </Nav>
     </Navbar>

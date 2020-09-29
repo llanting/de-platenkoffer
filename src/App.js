@@ -9,16 +9,14 @@ import {Switch, Route, withRouter} from 'react-router-dom';
 import AddAlbum from './components/AddAlbum';
 import MyAlbumsList from './components/MyAlbumsList';
 import Stats from './components/MyAlbums/Stats';
-import Signin from './components/User/Signin';
-import Signup from './components/User/Signup';
 import Home from './components/Home';
 //#endregion Components
 
 function App() {
 
-  // Add authentication & bootstrap for signin/signup
   // Styles
   // Modal style already added
+  // Styles sign in
   // API Limit? Insert pagination: https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs/Third_party_APIs
   // Stats for artist occurence
   // Search on albumname OR on artistname
@@ -33,18 +31,89 @@ function App() {
   const [ToMyList, setToMyList] = useState(false);
   const [albumGenres, setGenres] = useState(null);
   const [duplicate, setDuplicate] = useState(false);
+  const [loggedInUser, setLogIn] = useState(null);
+  const [toMyHome, setToMyHome] = useState(false);
+  const [logOut, setLogOut] = useState(false);
   //#endregion Hooks
 
   useEffect(() => {
-    axios.get(`${API_URL}/my-albums`)
+    if(!loggedInUser){
+      axios.get(`${API_URL}/user`, {withCredentials: true})
+        .then((result) => {
+          setLogIn(result.data);
+          axios.post(`${API_URL}/my-albums`, {userId: result.data._id}, {withCredentials: true})
+            .then((result) => {
+              const sorted = sortData(result.data);
+              setMyAlbums(sorted);
+              setFiltered(sorted);
+              setToMyHome(true);
+            }).catch((err) => {
+              
+            });
+        })
+    };
+  }, [loggedInUser]);
+
+  // Handle Sign Up
+  const handleSignUp = (e) => {
+    e.preventDefault();
+    const {username, email, password} = e.currentTarget;
+    axios.post(`${API_URL}/signup`, {username: username.value, email: email.value, password: password.value},  {withCredentials: true})
       .then((result) => {
-        const sorted = sortData(result.data);
-        setMyAlbums(sorted);
-        setFiltered(sorted);
-      }).catch((err) => {
-        
-      });
-  }, []);
+        setLogIn(result.data);
+        setLogOut(false);
+        // This code is not needed, but when deleting gives an error
+        axios.post(`${API_URL}/my-albums`, {userId: result.data._id}, {withCredentials: true})
+          .then((result) => {
+            const sorted = sortData(result.data);
+            setMyAlbums(sorted);
+            setFiltered(sorted);
+            setToMyHome(true);
+          }).catch((err) => {
+            
+          });
+      })
+      .catch((err) => {
+        // setErrStatus(true);
+        // let error = err.response.data.error
+        // setErr(error);
+      })
+  };
+
+  // Handle Sign In
+  const handleSignIn = (e) => {
+    e.preventDefault();
+    const {email, password} = e.currentTarget;
+    axios.post(`${API_URL}/signin`, {email: email.value, password: password.value},  {withCredentials: true})
+      .then((result) => {
+        setLogIn(result.data);
+        setLogOut(false);
+        axios.post(`${API_URL}/my-albums`, {userId: result.data._id}, {withCredentials: true})
+          .then((result) => {
+            const sorted = sortData(result.data);
+            setMyAlbums(sorted);
+            setFiltered(sorted);
+            setToMyHome(true);
+          }).catch((err) => {
+            
+          });
+      })
+      // .catch((err) => {
+      //   setErrStatus(true);
+      //   let error = err.response.data.error
+      //   setErr(error);
+      // })
+  };
+
+  const handleLogOut = () => {
+    setToMyHome(false);
+    axios.get(`${API_URL}/logout`, {withCredentials: true})
+      .then(() => {
+        localStorage.clear();
+        setLogIn(null);
+        setLogOut(true);
+      })
+  };
 
   // Sort data alphabetically
   const sortData = (arr) => {
@@ -68,7 +137,7 @@ function App() {
   const handleArtistSearch = (artist) => {
     setShowA(true);
     setShowAlbum(false);
-    axios.post(`${API_URL}/artist-search`, {artistName: artist})
+    axios.post(`${API_URL}/artist-search`, {artistName: artist},{withCredentials: true})
       .then((result) => {
         setArtists(result.data);
       }).catch((err) => {
@@ -93,7 +162,7 @@ function App() {
     setShowA(false);
     setShowAlbum(true);
     setGenres(artist.genres);
-    axios.get(`${API_URL}/albums/${artist.id}`)
+    axios.get(`${API_URL}/albums/${artist.id}`, {withCredentials: true})
       .then((result) => {
         setAlbums(result.data);
       }).catch((err) => {
@@ -108,7 +177,34 @@ function App() {
 
   // Add an album to myAlbumList
   const handleAdd = (album) => {
-     const {artists, id, images, name, release_date} = album;
+    const {artists, id, images, name, release_date} = album;
+
+    if (!myAlbums.length) {
+      setToMyList(true);
+      setAlbums(null);
+      setArtists(null);
+      let artistsArr = artists.reduce((arr, art) => {
+        let newArt = {name: art.name, id: art.id};
+        arr.push(newArt);
+        return arr;
+      }, []);
+  
+      axios.post(`${API_URL}/add-album`, {artists: artistsArr, id, image: images[0].url, name, release_date, genres: albumGenres, userId: loggedInUser._id}, {withCredentials: true})
+        .then((result) => {
+          let clonedmyAlbums = JSON.parse(JSON.stringify(myAlbums));
+          let clonedFilteredAlbums = JSON.parse(JSON.stringify(myFilteredAlbums));
+          clonedmyAlbums.push(result.data);
+          clonedFilteredAlbums.push(result.data);
+          let sorted = sortData(clonedmyAlbums);
+          let filteredSorted = sortData(clonedFilteredAlbums);
+          setFiltered(filteredSorted);
+          setMyAlbums(sorted);
+          setGenres(null);
+          setToMyList(false);
+        }).catch((err) => {
+          // Can't add album message
+        });
+    };
 
     // Check for duplicates
     myAlbums.forEach((album) => {
@@ -124,7 +220,7 @@ function App() {
           return arr;
         }, []);
     
-        axios.post(`${API_URL}/add-album`, {artists: artistsArr, id, image: images[0].url, name, release_date, genres: albumGenres})
+        axios.post(`${API_URL}/add-album`, {artists: artistsArr, id, image: images[0].url, name, release_date, genres: albumGenres, userId: loggedInUser._id}, {withCredentials: true})
           .then((result) => {
             let clonedmyAlbums = JSON.parse(JSON.stringify(myAlbums));
             let clonedFilteredAlbums = JSON.parse(JSON.stringify(myFilteredAlbums));
@@ -157,7 +253,6 @@ function App() {
   // Search for album on genre
   const handleSortGenre = (e) => {
     const selectedGenre = e.currentTarget.innerText.toLowerCase();
-    console.log(selectedGenre)
     if (selectedGenre === 'show all') {
       setFiltered(myAlbums);
       return;
@@ -170,7 +265,6 @@ function App() {
       if (genreFound === true) {arr.push(album)};
       return arr;
     }, []);
-    console.log(genreAlbums)
     setFiltered(genreAlbums);
   };
 
@@ -178,14 +272,20 @@ function App() {
    
     <Switch>
       <Route exact path="/" render={() => {
-        return <Home />
+        return <Home 
+          signIn={handleSignIn}
+          signUp={handleSignUp}
+          toMyHome={toMyHome}
+        />
       }}/>
       <Route path="/myhome" render={() => {
         return <MyAlbumsList 
           myAlbums={myFilteredAlbums} 
           searchMyAlbums={handleMyAlbumsSearch} 
           sortGenre={handleSortGenre}
-          />
+          logOut={handleLogOut}
+          checkLogOut={logOut}
+        />
       }}/>
       <Route path="/add-album" render={() => {
         return <AddAlbum 
@@ -201,16 +301,16 @@ function App() {
           myAlbums={myAlbums}
           duplicate={duplicate}
           hide={onHide}
-          />
+          logOut={handleLogOut}
+          checkLogOut={logOut}
+        />
       }}/>
       <Route path="/stats" render={() => {
-        return <Stats myAlbums={myAlbums}/>
-      }}/>
-      <Route path="/signin" render={() => {
-        return <Signin/>
-      }}/>
-      <Route path="/signup" render={() => {
-        return <Signup/>
+        return <Stats 
+          myAlbums={myAlbums} 
+          logOut={handleLogOut} 
+          checkLogOut={logOut}
+        />
       }}/>
     </Switch>
   );

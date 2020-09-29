@@ -4,6 +4,7 @@ import moment from 'moment';
 import './MyAlbumList.css';
 import Nav from './Nav';
 import SearchMyAlbums from './MyAlbums/SearchMyAlbums';
+import {Redirect} from 'react-router-dom';
 
 export default function MyAlbumsList(props) {
 
@@ -14,13 +15,17 @@ export default function MyAlbumsList(props) {
     if (element) {element.scrollIntoView()};
   }
 
+  if (props.checkLogOut) {
+    return <Redirect to={'/'}/>
+  };
+
   if (!props.myAlbums) {
     return <p>Loading...</p>
   };
 
   return (
     <>
-    <Nav />
+    <Nav logOut={props.logOut}/>
     <div style={{display: 'flex'}} className="home-myAlbums">
       <div>
         <SearchMyAlbums searchMyAlbums={props.searchMyAlbums} sortGenre={props.sortGenre}/>
