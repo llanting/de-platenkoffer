@@ -1,0 +1,25 @@
+.search-input {
+  width: 300px;
+  margin: 10px;
+  text-align: center;
+  border: 2px solid #3baada;
+  border-radius: 4px;
+}
+
+.search-input:focus {
+  outline: none;
+  background-color: #3baada;
+  color: white;
+}
+
+.dropDown-btn {
+  background-color: #3baada;
+  border: 1px solid #3baada;
+}
+
+.dropDown-btn:hover, .dropDown-btn:focus, .dropDown-btn:active {
+  background-color: #DA6B3B;
+  border: 1px solid #DA6B3B;
+  outline: none;
+}
+

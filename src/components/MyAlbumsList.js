@@ -3,6 +3,7 @@ import {Button, Card} from 'react-bootstrap';
 import moment from 'moment';
 import './MyAlbumList.css';
 import Nav from './Nav';
+import SearchMyAlbums from './MyAlbums/SearchMyAlbums';
 
 export default function MyAlbumsList(props) {
 
@@ -15,9 +16,9 @@ export default function MyAlbumsList(props) {
   return (
     <>
     <Nav />
-    <div style={{display: 'flex'}}>
+    <div style={{display: 'flex'}} className="home-myAlbums">
       <div>
-        <p>Number of LP's: {props.myAlbums.length}</p>
+        <SearchMyAlbums searchMyAlbums={props.searchMyAlbums} sortGenre={props.sortGenre}/>
         <div className="myAlbumsList">
         {
           props.myAlbums.map((album, i) => {
@@ -28,7 +29,7 @@ export default function MyAlbumsList(props) {
                 <Card.Subtitle className="mb-2 text-muted">
                   {
                     album.artist.map((art, i) => {
-                      return <>{art.name}</>;
+                      return <p key={'arti' + i}>{art.name}</p>;
                     })
                   }
                 </Card.Subtitle>

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { PieChart, Pie, Cell, Sector } from 'recharts';
-import Nav from './Nav';
+import Nav from '../Nav';
 
 // Get extra information piechart
 const renderActiveShape = (props) => {
@@ -86,6 +86,7 @@ export default function Stats(props) {
   return (
     <>
     <Nav />
+    <h4>Total number of LP's: {props.myAlbums.length}</h4>
     <p>Genres:</p>
     <PieChart width={750} height={300}>
       <Pie
