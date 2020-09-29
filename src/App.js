@@ -23,6 +23,7 @@ function App() {
   // Stats for artist occurence
   // Disable double add
   // Searchbar artist || album name (search for both without selecting if it is an artist or album) || genre (R&B - hiphop, pop, rock, disco, jazz, electronic, )
+  // Readme
 
   const [artists, setArtists] = useState(null);
   const [albums, setAlbums] = useState(null);
