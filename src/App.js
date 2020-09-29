@@ -90,6 +90,7 @@ function App() {
         console.log(result.data)
         setAlbums(result.data);
       }).catch((err) => {
+        console.log(err)
          // Albums not found message
       });
   };

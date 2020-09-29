@@ -8,6 +8,8 @@ export default function ArtistList(props) {
     return <></>;
   }
 
+  console.log(props.artists)
+
   return (
     <div className="artistList">
     {
