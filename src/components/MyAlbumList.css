@@ -3,3 +3,19 @@
   flex-wrap: wrap;
   justify-content: center;
 }
+
+.aplha-btn {
+  margin: 5px;
+  width: 30px;
+  height: 30px;
+  background-color: #DA6B3B;
+  border: 1px solid #DA6B3B;
+  outline: none;
+  padding: 0px;
+}
+
+.aplha-btn:hover, .aplha-btn:focus, .aplha-btn:active {
+  background-color: #3baada;
+  border: 1px solid #3baada;
+  outline: none;
+}

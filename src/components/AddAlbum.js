@@ -5,12 +5,20 @@ import SearchArtist from './AddAlbum/SearchArtist';
 //import SearchAlbum from './AddAlbum/SearchAlbum';
 import DefaultImg from '../bruno-emmanuelle-Gi6-m_t_W-E-unsplash.jpg';
 import Nav from './Nav';
+import {Modal, Button} from 'react-bootstrap';
 
 export default function AddAlbum(props) {
+
   return (
     <>
     <Nav />
     <div>
+      <Modal centered show={props.duplicate}>
+        <Modal.Body>
+          <p>You've already added this title!</p>
+        </Modal.Body>
+        <Button onClick={props.hide}>Close</Button>
+      </Modal>
       <SearchArtist onSearch={props.handleArtistSearch}/>
       {/* or
       <SearchAlbum onAlbumSearch={props.handleAlbumSearch}/> */}
